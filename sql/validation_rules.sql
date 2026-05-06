@@ -20,9 +20,9 @@ SELECT 1 AS ID_CHECK,
     'stg_dim_film' AS ETL_TABLE,
     'check integrity of BK' AS ETL_CHECKTYPE,
     'number of rows with repeated BK: ' +
-        str(count(row_count)) AS DESCRIPTION_RESULT,
+        CAST(COUNT(row_count) AS VARCHAR) AS DESCRIPTION_RESULT,
     CASE
-        WHEN count(row_count) > 0 THEN 'FAIL'
+        WHEN COUNT(row_count) > 0 THEN 'FAIL'
         ELSE 'OK'
     END AS ETL_RESULT
 FROM (
@@ -80,9 +80,9 @@ SELECT 3 AS ID_CHECK,
     'stg_fact_daily_box_office' AS ETL_TABLE,
     'check integrity of fact PK (combo all FKs)' AS ETL_CHECKTYPE,
     'number of rows with repeated PK: ' +
-        str(count(row_count)) AS DESCRIPTION_RESULT,
+        CAST(COUNT(row_count) AS VARCHAR) AS DESCRIPTION_RESULT,
     CASE
-        WHEN count(row_count) > 0 THEN 'FAIL'
+        WHEN COUNT(row_count) > 0 THEN 'FAIL'
         ELSE 'OK'
     END AS ETL_RESULT
 FROM (
@@ -106,9 +106,9 @@ SELECT 4 AS ID_CHECK,
     'stg_fact_daily_box_office' AS ETL_TABLE,
     'check parent of FK for Actor dimension' AS ETL_CHECKTYPE,
     'number of rows without parent key: ' +
-        str(count(*)) AS DESCRIPTION_RESULT,
+        CAST(COUNT(*) AS VARCHAR) AS DESCRIPTION_RESULT,
     CASE
-        WHEN count(*) > 0 THEN 'FAIL'
+        WHEN COUNT(*) > 0 THEN 'FAIL'
         ELSE 'OK'
     END AS ETL_RESULT
 FROM STG_MAD_MOVIES.dbo.stg_fact_daily_box_office fact
@@ -127,9 +127,9 @@ SELECT 5 AS ID_CHECK,
     'stg_fact_daily_box_office' AS ETL_TABLE,
     'business rule: gross revenue per day must be non-negative' AS ETL_CHECKTYPE,
     'number of rows with negative gross revenue: ' +
-        str(count(*)) AS DESCRIPTION_RESULT,
+        CAST(COUNT(*) AS VARCHAR) AS DESCRIPTION_RESULT,
     CASE
-        WHEN count(*) > 0 THEN 'FAIL'
+        WHEN COUNT(*) > 0 THEN 'FAIL'
         ELSE 'OK'
     END AS ETL_RESULT
 FROM STG_MAD_MOVIES.dbo.stg_fact_daily_box_office
@@ -146,9 +146,9 @@ SELECT 6 AS ID_CHECK,
     'stg_fact_daily_box_office' AS ETL_TABLE,
     'business rule: days since release must be non-negative' AS ETL_CHECKTYPE,
     'number of rows with negative days since release: ' +
-        str(count(*)) AS DESCRIPTION_RESULT,
+        CAST(COUNT(*) AS VARCHAR) AS DESCRIPTION_RESULT,
     CASE
-        WHEN count(*) > 0 THEN 'FAIL'
+        WHEN COUNT(*) > 0 THEN 'FAIL'
         ELSE 'OK'
     END AS ETL_RESULT
 FROM STG_MAD_MOVIES.dbo.stg_fact_daily_box_office
@@ -165,9 +165,9 @@ SELECT 7 AS ID_CHECK,
     'stg_fact_daily_box_office' AS ETL_TABLE,
     'business rule: revenue rows must have days_since_release' AS ETL_CHECKTYPE,
     'number of rows with revenue but missing days_since_release: ' +
-        str(count(*)) AS DESCRIPTION_RESULT,
+        CAST(COUNT(*) AS VARCHAR) AS DESCRIPTION_RESULT,
     CASE
-        WHEN count(*) > 0 THEN 'FAIL'
+        WHEN COUNT(*) > 0 THEN 'FAIL'
         ELSE 'OK'
     END AS ETL_RESULT
 FROM STG_MAD_MOVIES.dbo.stg_fact_daily_box_office

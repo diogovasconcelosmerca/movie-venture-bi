@@ -9,7 +9,7 @@
 ==========================================================*/
 
 CREATE TABLE dim_date (
-    sk_date             INT             NOT NULL,
+    sk_date             INT             NOT NULL PRIMARY KEY,
     proper_date         DATE            NOT NULL,
 
     full_date           VARCHAR(50)     NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE dim_date (
 ==========================================================*/
 
 CREATE TABLE dim_film (
-    sk_film                     INT             NOT NULL,
+    sk_film                     INT             NOT NULL PRIMARY KEY,
     bk_film                     VARCHAR(400)    NOT NULL,
     film_title                  VARCHAR(200)    NOT NULL,
     film_release_year           INT             NULL,
@@ -64,7 +64,7 @@ CREATE TABLE dim_film (
 ==========================================================*/
 
 CREATE TABLE dim_actor (
-    sk_actor            INT             NOT NULL,
+    sk_actor            INT             NOT NULL PRIMARY KEY,
     bk_actor            VARCHAR(150)    NOT NULL,
     first_name_actor    VARCHAR(100)    NULL,
     surname_actor       VARCHAR(100)    NULL,
@@ -77,7 +77,7 @@ CREATE TABLE dim_actor (
 ==========================================================*/
 
 CREATE TABLE dim_director (
-    sk_director             INT             NOT NULL,
+    sk_director             INT             NOT NULL PRIMARY KEY,
     bk_director             VARCHAR(150)    NOT NULL,
     first_name_director     VARCHAR(100)    NULL,
     surname_director        VARCHAR(100)    NULL,
@@ -90,7 +90,7 @@ CREATE TABLE dim_director (
 ==========================================================*/
 
 CREATE TABLE dim_production_company (
-    sk_production_company           INT             NOT NULL,
+    sk_production_company           INT             NOT NULL PRIMARY KEY,
     bk_production_company           VARCHAR(150)    NOT NULL,
     production_company              VARCHAR(200)    NULL,
     country_production_company      VARCHAR(100)    NULL,
@@ -111,5 +111,6 @@ CREATE TABLE fact_daily_box_office (
     fk_director             INT             NOT NULL,
     fk_actor                INT             NOT NULL,
     gross_revenue_per_day   DECIMAL(18,2)   NULL,
-    days_since_release      INT             NULL
+    days_since_release      INT             NULL,
+    PRIMARY KEY (fk_date, fk_film, fk_production_company, fk_director, fk_actor)
 );
