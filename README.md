@@ -1,5 +1,6 @@
 # Movie Venture — BI-Powered Cinematic Intelligence
 
+![Movie Venture Banner](assets/movie_venture_banner.png)
 ![Microsoft Fabric](https://img.shields.io/badge/Microsoft%20Fabric-Data%20Platform-0078D4?logo=microsoftazure&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python&logoColor=white)
 ![SQL](https://img.shields.io/badge/SQL-Data%20Warehouse-CC2927?logo=microsoftsqlserver&logoColor=white)
@@ -299,24 +300,24 @@ The visualization layer translates engineering into decisions for the investment
 ### 1. Report A: Performance & Return
 Focuses on which film, budget, and talent characteristics drive revenue. 
 - *Insight*: Return is concentrated. The mid-budget tier is the most capital-efficient overall, but specific low-budget genre blends (e.g., ComedyFantasy) yield massive ROI.
-![Report A Overview](assets/report_a_overview.png) *(Placeholder for screenshot)*
+
 
 ### 2. Report B: Timing & Geography
 Focuses on when and where revenue is generated.
 - *Insight*: Takings cluster heavily on weekends, and a film's commercial life decays sharply within 70 days. Revenue concentrates in a limited set of filming countries.
-![Report B Overview](assets/report_b_overview.png) *(Placeholder for screenshot)*
+
 
 ### 3. Report C: Box-Office Forecasts
 Predictive analytics dashboard showing future trends and a prescriptive "Where to Invest" view.
 - *Insight*: Identifies the "sweet spot" of investment — growing genres with high success rates and large projected revenues (e.g., AnimationAdventureComedy).
-![Report C Overview](assets/report_c_overview.png) *(Placeholder for screenshot)*
+
 
 ### 4. Paginated Reports: Talent League Tables
 Pixel-perfect, print-ready reports ranking Top 30 Lead Actors and Directors by cumulative box-office revenue to support casting and greenlight decisions.
 
 ### 5. Executive Dashboard: "MAD Movies"
 A single-canvas dashboard pinning the decision-critical tiles from all reports, guiding the user from context to recommendation ("Where to Invest Next").
-![Executive Dashboard](assets/executive_dashboard.png) *(Placeholder for screenshot)*
+
 
 ---
 
