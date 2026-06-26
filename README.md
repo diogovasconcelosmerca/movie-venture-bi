@@ -173,8 +173,18 @@ This project implements a complete **Medallion Architecture** (Bronze, Silver, G
 
 ### Master ETL Orchestration
 
-*(Placeholder for ETL Master Pipeline Image - Please provide screenshot of `PL_MAD_MOVIES_MASTER_ETL` from Fabric)*
-*(Placeholder for Dataflows Gen2 Image - Please provide screenshot of the Dataflows workspace from Fabric)*
+The `PL_MAD_MOVIES_MASTER_ETL` pipeline orchestrates the entire data movement from extraction to the final Data Warehouse.
+
+![Master ETL Pipeline](assets/pl_master_etl.png)
+
+#### Staging Load & Validation
+The staging pipelines ensure that all Kimball dimensional rules and 17 Data Quality validation checks are executed properly before any data enters the Gold Layer.
+
+**Load Staging Pipeline (`PL_MAD_MOVIES_LOAD_STG`)**:
+![Load Staging Pipeline](assets/pl_load_stg.png)
+
+**Validation Pipeline (`PL_MAD_MOVIES_VALIDATE_STG`)**:
+![Validate Staging Pipeline](assets/pl_validate_stg.png)
 
 ---
 
