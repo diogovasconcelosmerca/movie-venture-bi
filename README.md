@@ -111,6 +111,9 @@ For detailed architecture documentation, see [`docs/ARCHITECTURE.md`](docs/ARCHI
     Grain: One record per Film x Date
 ```
 
+![Data Warehouse Star Schema](assets/star_schema.png)
+
+
 ---
 
 ## Business Questions
@@ -144,9 +147,11 @@ For detailed architecture documentation, see [`docs/ARCHITECTURE.md`](docs/ARCHI
 
 ---
 
-## Data Pipeline
+## Phase 1: Data Engineering & Warehousing (BI I)
 
 ### Master ETL Pipeline
+
+*(Placeholder for ETL Pipeline Image - Please provide screenshot from Fabric)*
 
 ```
 PL_MAD_MOVIES_MASTER_ETL
@@ -273,9 +278,12 @@ The full academic report covering both engineering (BI I) and analysis/dashboard
 
 ---
 
-## Semantic Model (BI II)
+## Phase 2: Semantic Model & Analytics (BI II)
 
 The analytical layer is built with a **Direct Lake** semantic model over the Data Warehouse, translating technical tables into a business-ready format.
+
+![Semantic Model](assets/semantic_model.png)
+
 - **Hierarchies**: 6 drill-down paths across Date (Calendar, Marketing Season, Weekday), Actor, Director, and Production Company.
 - **DAX Measures**: 8 Base Measures (Total Revenue, Avg Revenue per Film, etc.), 3 Supporting Measures, 3 Advanced Measures (for weekly momentum).
 - **KPIs**: 4 native KPIs comparing current performance against reference values (e.g., Genre Average, ROI, Actor Average).
@@ -294,9 +302,10 @@ Predictive models were built using scikit-learn in a Fabric PySpark notebook, re
 
 ---
 
-## Reporting & Dashboarding
+## Phase 3: Reporting & Dashboarding
 
 The visualization layer translates engineering into decisions for the investment committee. It consists of three interactive reports, a paginated report, and a final executive dashboard:
+
 
 ### 1. Report A: Performance & Return
 Focuses on which film, budget, and talent characteristics drive revenue. 
