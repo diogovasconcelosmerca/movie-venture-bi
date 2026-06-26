@@ -154,49 +154,54 @@ This project implements a complete **Medallion Architecture** (Bronze, Silver, G
 ### Architecture Overview
 
 ```mermaid
-flowchart TD
-    %% Styling
-    classDef bronze fill:#cd7f32,stroke:#333,stroke-width:2px,color:#fff;
-    classDef silver fill:#c0c0c0,stroke:#333,stroke-width:2px,color:#000;
-    classDef gold fill:#ffd700,stroke:#333,stroke-width:2px,color:#000;
-    classDef external fill:#1e1e1e,stroke:#666,stroke-width:2px,color:#fff;
-    classDef db fill:#0078D4,stroke:#333,stroke-width:2px,color:#fff;
+flowchart LR
+    %% Aesthetics
+    classDef ext fill:#2d3436,stroke:#636e72,color:#fff,stroke-width:2px,rx:8px,ry:8px;
+    classDef bronze fill:#b87333,stroke:#fff,color:#fff,stroke-width:2px,rx:8px,ry:8px;
+    classDef silver fill:#7f8c8d,stroke:#fff,color:#fff,stroke-width:2px,rx:8px,ry:8px;
+    classDef gold fill:#f39c12,stroke:#fff,color:#fff,stroke-width:2px,rx:8px,ry:8px;
+    classDef present fill:#0984e3,stroke:#fff,color:#fff,stroke-width:2px,rx:8px,ry:8px;
 
-    %% Source Data
-    subgraph BronzeLayer [Layer 1: Source Data]
-        B_Mojo(Box Office Mojo):::external -->|Manual Export| B_CSV[Raw CSVs]
-        B_CSV -->|Enrichment Pipeline| B_Py[5 Python Notebooks]
-        B_Py -.->|API Calls| TMDb[TMDb & OMDb API]:::external
-        B_Py -.->|API Calls| Wiki[Wikidata SPARQL]:::external
-        B_Py -->|Store| LH[(LH_SOURCES_MAD_MOVIES)]:::db
+    Sources[("External Sources\n(Box Office, APIs)")]:::ext
+
+    subgraph L1 [🥉 Bronze: Lakehouse]
+        direction TB
+        NB["Python Notebooks\n(Data Enrichment)"]:::bronze
+        LH[("LH_SOURCES\n(Raw CSVs)")]:::bronze
+        NB --> LH
     end
 
-    %% Staging Area
-    subgraph SilverLayer [Layer 2: Staging Area]
-        LH -->|PL_MAD_MOVIES_SPLIT_SOURCE_FILES| S_DF[6 Dataflows Gen2]
-        S_DF -->|Clean & Format| STG[(STG_MAD_MOVIES)]:::db
-        STG -.->|PL_MAD_MOVIES_VALIDATE_STG| DQ[17 DQ Validation Rules]
-        DQ -.->|Log| LogDB[(log_quality_checks)]:::db
+    subgraph L2 [🥈 Silver: Staging Area]
+        direction TB
+        DF["Dataflows Gen2\n(Kimball Mapping)"]:::silver
+        STG[("STG_MAD_MOVIES\n(Validated Data)")]:::silver
+        DQ["17 DQ Rules\n(Quality Logs)"]:::silver
+        DF --> STG
+        STG -.-> DQ
     end
 
-    %% Data Warehouse
-    subgraph GoldLayer [Layer 3: Data Warehouse]
-        STG -->|PL_MAD_MOVIES_LOAD_DW| DW[(DW_MAD_MOVIES)]:::db
-        DW --> Dims(5 Conformed Dimensions)
-        DW --> Fact(Fact Daily Box Office)
+    subgraph L3 [🥇 Gold: Data Warehouse]
+        direction TB
+        DW[("DW_MAD_MOVIES\n(Star Schema)")]:::gold
+        Dims["5 Dimensions\n(Surrogate Keys)"]:::gold
+        Fact["Fact Table"]:::gold
+        DW --> Dims
+        DW --> Fact
     end
 
-    %% Semantic Model & Analytics
-    subgraph PresentationLayer [Layer 4: Semantic Model & ML]
-        DW -->|Direct Lake| SM[Semantic Model\nDAX & Hierarchies]
-        DW -->|JDBC| ML[Fabric Spark\nPredictive Analytics]
-        SM --> PBI[Power BI Dashboards]
+    subgraph L4 [💎 Presentation Layer]
+        direction TB
+        SM["Semantic Model\n(Direct Lake)"]:::present
+        ML["Fabric Spark\n(Predictive ML)"]:::present
+        PBI["Power BI Dashboards"]:::present
+        SM --> PBI
     end
 
-    %% Connections between layers
-    BronzeLayer --> SilverLayer
-    SilverLayer --> GoldLayer
-    GoldLayer --> PresentationLayer
+    Sources -->|Extract| NB
+    LH -->|Split| DF
+    STG -->|Load| DW
+    DW --> SM
+    DW --> ML
 ```
 
 ### Step-by-Step Medallion Architecture
