@@ -244,8 +244,7 @@ movie-venture-bi/
 ├── docs/
 │   └── ARCHITECTURE.md                            # Detailed architecture documentation
 ├── report/
-│   ├── BI1_Group81_Report.pdf                     # BI I: Full academic report (20 pages)
-│   └── BI II Final_Group 181.pdf                  # BI II: Final academic report (50 pages) covering Analysis & Dashboarding
+│   └── BI II Final_Group 181.pdf                  # Full academic report (50 pages) covering BI I & BI II
 └── assets/                                        # Architecture & Dashboard screenshots
 ```
 
@@ -266,10 +265,9 @@ The ETL pipelines, Data Warehouse, Semantic Model, and ML notebook run on **Micr
 
 ---
 
-## Reports
+## Report
 
-- **BI I (Engineering)**: The full academic report with detailed methodology, architecture decisions, and data quality analysis is available at [`report/BI1_Group81_Report.pdf`](report/BI1_Group81_Report.pdf).
-- **BI II (Analysis & Dashboarding)**: The final academic report detailing the predictive modelling, semantic model, and data visualization is available at [`report/BI II Final_Group 181.pdf`](report/BI%20II%20Final_Group%20181.pdf).
+The full academic report covering both engineering (BI I) and analysis/dashboarding (BI II) with detailed methodology, architecture decisions, predictive modelling, and data visualization is available at [`report/BI II Final_Group 181.pdf`](report/BI%20II%20Final_Group%20181.pdf).
 
 ---
 
