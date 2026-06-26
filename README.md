@@ -5,7 +5,7 @@
 ![SQL](https://img.shields.io/badge/SQL-Data%20Warehouse-CC2927?logo=microsoftsqlserver&logoColor=white)
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-ML-orange?logo=scikit-learn&logoColor=white)
 ![Power BI](https://img.shields.io/badge/Power%20BI-Dashboard-F2C811?logo=powerbi&logoColor=black)
-![Status](https://img.shields.io/badge/Status-In%20Progress-yellow)
+![Status](https://img.shields.io/badge/Status-Completed-success)
 
 ## Project Overview
 
@@ -244,8 +244,9 @@ movie-venture-bi/
 ├── docs/
 │   └── ARCHITECTURE.md                            # Detailed architecture documentation
 ├── report/
-│   └── BI1_Group81_Report.pdf                     # Full academic report (20 pages)
-└── assets/                                        # Architecture screenshots
+│   ├── BI1_Group81_Report.pdf                     # BI I: Full academic report (20 pages)
+│   └── BI II Final_Group 181.pdf                  # BI II: Final academic report (50 pages) covering Analysis & Dashboarding
+└── assets/                                        # Architecture & Dashboard screenshots
 ```
 
 ---
@@ -265,17 +266,70 @@ The ETL pipelines, Data Warehouse, Semantic Model, and ML notebook run on **Micr
 
 ---
 
-## Report
+## Reports
 
-The full academic report with detailed methodology, architecture decisions, and data quality analysis is available at [`report/BI1_Group81_Report.pdf`](report/BI1_Group81_Report.pdf).
+- **BI I (Engineering)**: The full academic report with detailed methodology, architecture decisions, and data quality analysis is available at [`report/BI1_Group81_Report.pdf`](report/BI1_Group81_Report.pdf).
+- **BI II (Analysis & Dashboarding)**: The final academic report detailing the predictive modelling, semantic model, and data visualization is available at [`report/BI II Final_Group 181.pdf`](report/BI%20II%20Final_Group%20181.pdf).
 
 ---
 
-## Coming Soon
+## Semantic Model (BI II)
 
-- **Power BI Dashboard** — Interactive dashboard answering all 13 business questions
-- **BI 2 Report** — Semantic model documentation, predictive analytics, and dashboard design
+The analytical layer is built with a **Direct Lake** semantic model over the Data Warehouse, translating technical tables into a business-ready format.
+- **Hierarchies**: 6 drill-down paths across Date (Calendar, Marketing Season, Weekday), Actor, Director, and Production Company.
+- **DAX Measures**: 8 Base Measures (Total Revenue, Avg Revenue per Film, etc.), 3 Supporting Measures, 3 Advanced Measures (for weekly momentum).
+- **KPIs**: 4 native KPIs comparing current performance against reference values (e.g., Genre Average, ROI, Actor Average).
 
+---
+
+## Predictive Analytics
+
+Predictive models were built using scikit-learn in a Fabric PySpark notebook, reading from the DW and writing results directly as Delta tables (exposed to the semantic model).
+
+1. **Genre Trends (Linear Regression)**: Predicts next-year revenue for 193 genres. Identifies genres as *Growing*, *Declining*, or *Stable*.
+2. **Film Tier Classification (Gradient Boosting)**: Predicts box-office tier (High, Mid, Low) before a film's release based on budget, runtime, ratings, and genre. 
+   - **Performance**: F1 Score = 0.737, Accuracy = 0.738.
+   - **Top Feature**: Budget (51.2% importance), followed by Runtime (4.2%) and Award Nominations (4.2%).
+   - The model proved that tier predictions accurately track real revenue (High ≫ Mid ≫ Low) and can guide investment decisions.
+
+---
+
+## Reporting & Dashboarding
+
+The visualization layer translates engineering into decisions for the investment committee. It consists of three interactive reports, a paginated report, and a final executive dashboard:
+
+### 1. Report A: Performance & Return
+Focuses on which film, budget, and talent characteristics drive revenue. 
+- *Insight*: Return is concentrated. The mid-budget tier is the most capital-efficient overall, but specific low-budget genre blends (e.g., ComedyFantasy) yield massive ROI.
+![Report A Overview](assets/report_a_overview.png) *(Placeholder for screenshot)*
+
+### 2. Report B: Timing & Geography
+Focuses on when and where revenue is generated.
+- *Insight*: Takings cluster heavily on weekends, and a film's commercial life decays sharply within 70 days. Revenue concentrates in a limited set of filming countries.
+![Report B Overview](assets/report_b_overview.png) *(Placeholder for screenshot)*
+
+### 3. Report C: Box-Office Forecasts
+Predictive analytics dashboard showing future trends and a prescriptive "Where to Invest" view.
+- *Insight*: Identifies the "sweet spot" of investment — growing genres with high success rates and large projected revenues (e.g., AnimationAdventureComedy).
+![Report C Overview](assets/report_c_overview.png) *(Placeholder for screenshot)*
+
+### 4. Paginated Reports: Talent League Tables
+Pixel-perfect, print-ready reports ranking Top 30 Lead Actors and Directors by cumulative box-office revenue to support casting and greenlight decisions.
+
+### 5. Executive Dashboard: "MAD Movies"
+A single-canvas dashboard pinning the decision-critical tiles from all reports, guiding the user from context to recommendation ("Where to Invest Next").
+![Executive Dashboard](assets/executive_dashboard.png) *(Placeholder for screenshot)*
+
+---
+
+## The Ideal Film Profile (Findings)
+
+Based on the full analytical lifecycle, MAD Investment Group's data-driven investment strategy concludes:
+1. **Return is concentrated, not uniform.** Average ROI is $0.92 per $1. Edge comes from selection, not spending.
+2. **At low budget, precision beats breadth.** Specific blends outperform broad genres.
+3. **Longer films earn more.** Films >120 mins average $1.05M daily vs $567K for <90 mins.
+4. **Ratings are the next lever.** After budget, critical quality (IMDb, Rotten Tomatoes) drives top-tier performance.
+5. **Timing is consistent.** Weekend releases and a 70-day theatrical window are universal.
 ---
 
 ## Authors
