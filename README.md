@@ -151,6 +151,54 @@ For detailed architecture documentation, see [`docs/ARCHITECTURE.md`](docs/ARCHI
 
 This project implements a complete **Medallion Architecture** (Bronze, Silver, Gold) entirely within Microsoft Fabric, structured across four distinct layers to ensure data quality, scalability, and performance.
 
+### Architecture Overview
+
+```mermaid
+flowchart TD
+    %% Styling
+    classDef bronze fill:#cd7f32,stroke:#333,stroke-width:2px,color:#fff;
+    classDef silver fill:#c0c0c0,stroke:#333,stroke-width:2px,color:#000;
+    classDef gold fill:#ffd700,stroke:#333,stroke-width:2px,color:#000;
+    classDef external fill:#1e1e1e,stroke:#666,stroke-width:2px,color:#fff;
+    classDef db fill:#0078D4,stroke:#333,stroke-width:2px,color:#fff;
+
+    %% Source Data
+    subgraph BronzeLayer [Layer 1: Source Data]
+        B_Mojo(Box Office Mojo):::external -->|Manual Export| B_CSV[Raw CSVs]
+        B_CSV -->|Enrichment Pipeline| B_Py[5 Python Notebooks]
+        B_Py -.->|API Calls| TMDb[TMDb & OMDb API]:::external
+        B_Py -.->|API Calls| Wiki[Wikidata SPARQL]:::external
+        B_Py -->|Store| LH[(LH_SOURCES_MAD_MOVIES)]:::db
+    end
+
+    %% Staging Area
+    subgraph SilverLayer [Layer 2: Staging Area]
+        LH -->|PL_MAD_MOVIES_SPLIT_SOURCE_FILES| S_DF[6 Dataflows Gen2]
+        S_DF -->|Clean & Format| STG[(STG_MAD_MOVIES)]:::db
+        STG -.->|PL_MAD_MOVIES_VALIDATE_STG| DQ[17 DQ Validation Rules]
+        DQ -.->|Log| LogDB[(log_quality_checks)]:::db
+    end
+
+    %% Data Warehouse
+    subgraph GoldLayer [Layer 3: Data Warehouse]
+        STG -->|PL_MAD_MOVIES_LOAD_DW| DW[(DW_MAD_MOVIES)]:::db
+        DW --> Dims(5 Conformed Dimensions)
+        DW --> Fact(Fact Daily Box Office)
+    end
+
+    %% Semantic Model & Analytics
+    subgraph PresentationLayer [Layer 4: Semantic Model & ML]
+        DW -->|Direct Lake| SM[Semantic Model\nDAX & Hierarchies]
+        DW -->|JDBC| ML[Fabric Spark\nPredictive Analytics]
+        SM --> PBI[Power BI Dashboards]
+    end
+
+    %% Connections between layers
+    BronzeLayer --> SilverLayer
+    SilverLayer --> GoldLayer
+    GoldLayer --> PresentationLayer
+```
+
 ### Step-by-Step Medallion Architecture
 
 #### 🥉 Layer 1: Source Data (Bronze / Lakehouse)
@@ -175,10 +223,37 @@ This project implements a complete **Medallion Architecture** (Bronze, Silver, G
 
 The `PL_MAD_MOVIES_MASTER_ETL` pipeline orchestrates the entire data movement from extraction to the final Data Warehouse.
 
+```mermaid
+flowchart LR
+    classDef process fill:#2b3a42,stroke:#3fb0ac,stroke-width:2px,color:#fff;
+    
+    Split[PL split source file]:::process --> LoadSTG[PL run STG initial]:::process
+    LoadSTG --> Validate[PL validate Data]:::process
+    Validate --> LoadDW[PL run DW load]:::process
+```
+
 ![Master ETL Pipeline](assets/pl_master_etl.png)
 
 #### Staging Load & Validation
 The staging pipelines ensure that all Kimball dimensional rules and 17 Data Quality validation checks are executed properly before any data enters the Gold Layer.
+
+```mermaid
+flowchart TD
+    classDef process fill:#2b3a42,stroke:#3fb0ac,stroke-width:2px,color:#fff;
+    classDef wait fill:#ff7b25,stroke:#333,stroke-width:2px,color:#fff;
+
+    Start((Start)) --> SQL_Clear[Clear DIMs]:::process
+    SQL_Clear --> Wait1[Wait]:::wait
+    
+    Wait1 --> DF_Date[DF STG DIM Date]:::process
+    Wait1 --> DF_Film[DF STG DIM Film]:::process
+    Wait1 --> DF_Actor[DF STG DIM Actor]:::process
+    Wait1 --> DF_Dir[DF STG DIM Director]:::process
+    Wait1 --> DF_Prod[DF STG DIM Production]:::process
+    
+    DF_Date & DF_Film & DF_Actor & DF_Dir & DF_Prod --> Wait2[Wait for DIMs]:::wait
+    Wait2 --> DF_Fact[DF STG Fact]:::process
+```
 
 **Load Staging Pipeline (`PL_MAD_MOVIES_LOAD_STG`)**:
 ![Load Staging Pipeline](assets/pl_load_stg.png)
