@@ -149,41 +149,32 @@ For detailed architecture documentation, see [`docs/ARCHITECTURE.md`](docs/ARCHI
 
 ## Phase 1: Data Engineering & Warehousing (BI I)
 
-### Master ETL Pipeline
+This project implements a complete **Medallion Architecture** (Bronze, Silver, Gold) entirely within Microsoft Fabric, structured across four distinct layers to ensure data quality, scalability, and performance.
 
-*(Placeholder for ETL Pipeline Image - Please provide screenshot from Fabric)*
+### Step-by-Step Medallion Architecture
 
-```
-PL_MAD_MOVIES_MASTER_ETL
-═══════════════════════════════════════════════════════════════════
+#### 🥉 Layer 1: Source Data (Bronze / Lakehouse)
+- **Component**: `LH_SOURCES_MAD_MOVIES` (Fabric Lakehouse)
+- **Process**: Daily box-office data from Box Office Mojo is enriched via 5 Python notebooks using multiple APIs (TMDb, OMDb, Wikidata SPARQL) with fuzzy matching and persistent caching.
+- **Output**: 8 raw/enriched CSV files stored in the Lakehouse.
+- **Pipeline**: `PL_MAD_MOVIES_SPLIT_SOURCE_FILES` parallelizes Dataflows Gen2 to extract entities.
 
-  ┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-  │ PL split    │     │ PL run STG  │     │ PL validate │     │ PL run DW   │
-  │ source file │────>│ initial     │────>│ Data        │────>│ load        │
-  │             │     │ (load STG)  │     │ (17 rules)  │     │ (load DW)   │
-  └─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
-        │                    │                   │                    │
-   Split CSVs into      6 Dataflows Gen2    Automated DQ       Clear + Copy
-   entity-specific      load staging        validation with    dims parallel,
-   source tables        tables (Kimball)    logging to         then load fact
-                                            log_quality_checks
-```
+#### 🥈 Layer 2: Staging Area (Silver / Warehouse)
+- **Component**: `STG_MAD_MOVIES` (Fabric Warehouse)
+- **Process**: 6 Dataflows Gen2 apply Kimball dimensional modeling principles (handling nulls, standardizing types, generating business keys). 
+- **Data Quality Framework**: An automated 17-rule validation pipeline (`PL_MAD_MOVIES_VALIDATE_STG`) checks for FK orphans, PK integrity, and business logic before loading. Results are logged to a `log_quality_checks` table.
 
-### Data Quality Framework
+#### 🥇 Layer 3: Data Warehouse (Gold / Star Schema)
+- **Component**: `DW_MAD_MOVIES` (Fabric Warehouse)
+- **Process**: `PL_MAD_MOVIES_LOAD_DW` clears and loads dimensions in parallel, generating Surrogate Keys (SKs) on the fly, followed by the fact table.
+- **Output**: A governed Kimball Star Schema with 1 Fact Table and 5 Conformed Dimensions.
 
-17 automated validation rules with results logged to `log_quality_checks`:
+![Data Warehouse Star Schema](assets/star_schema.png)
 
-| Rule | Check | Applied To |
-|------|-------|-----------|
-| 1 | Business Key integrity (no duplicates) | All dimensions |
-| 2 | Attribute-level uniqueness | All dimensions |
-| 3 | Fact composite PK integrity | Fact table |
-| 4 | FK parent existence (no orphans) | All FK relationships |
-| 5 | Gross revenue non-negative | Fact table |
-| 6 | Days since release non-negative | Fact table |
-| 7 | Revenue rows must have days_since_release | Fact table |
+### Master ETL Orchestration
 
-**Result: 15/17 rules passed. 2 failures investigated and documented.**
+*(Placeholder for ETL Master Pipeline Image - Please provide screenshot of `PL_MAD_MOVIES_MASTER_ETL` from Fabric)*
+*(Placeholder for Dataflows Gen2 Image - Please provide screenshot of the Dataflows workspace from Fabric)*
 
 ---
 
